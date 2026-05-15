@@ -21,7 +21,7 @@ export default {
 		try {
 			const { userMessage, history, systemInstruction, responseMimeType } = await request.json();
 			const model = genAI.getGenerativeModel({
-				model: 'gemini-1.5-flash',
+				model: 'gemini-3.1-flash-lite',
 				// baseURL: 'https://gateway.ai.cloudflare.com/v1/9b633f2b6676437c3455dda4e76abe7c/gemini/google-ai-studio',
 				systemInstruction,
 			});
@@ -42,7 +42,16 @@ export default {
 			const result = await chatSession.sendMessage(userMessage);
 			return new Response(JSON.stringify(result.response), { headers: corsHeaders });
 		} catch (e) {
-			return new Response({ error: e.message }, { headers: corsHeaders });
+			// ESTO ES LO NUEVO: Imprime el error real en tu terminal
+			console.error("🚨 Error de Gemini:", e); 
+			
+			return new Response(JSON.stringify({ 
+				error: e.message,
+				name: e.name
+			}), { 
+				status: 500, 
+				headers: corsHeaders 
+			});
 		}
 	},
 };
